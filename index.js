@@ -13,48 +13,78 @@ readline.prompt();
 readline.on('line', async (line) => {
     switch (line.trim()) {
         case 'list vegan foods': {
-            // fetch all the foods from the api
-            axios.get('http://localhost:3001/food').then(({ data }) => {
-
-                // veganIterable is a working custom iterator
+            // ------------------ GENERATOR STARTS --------------------
+            // converting custom iterator to generator
+            const { data } = await axios.get('http://localhost:3001/food');
+            function* listVeganFoods() {
                 let idx = 0;
-
                 // filter all the foods which include "vegan" in their dietary preference
                 // and the resulting array will be used to iterate over by the custom iterator
                 const veganOnly = data.filter(foodItem => {
                     return foodItem.dietary_preferances.includes("vegan");
                 });
 
-                const veganIterable = {
-
-                    // creating the veganIterable an iterable - should return an iterable itself
-                    [Symbol.iterator]() {
-                        return {
-                            [Symbol.iterator]() { return this; },
-                            next() {
-                                const current = veganOnly[idx];
-                                // increment idx on each next() call
-                                idx++;
-
-                                if (current) {
-                                    return { value: current, done: false }
-                                } else {
-                                    return { value: current, done: true }
-                                }
-                            }
-                        }
-                    }
+                // run the loop till the time there are items in the veganOnly array
+                while (veganOnly[idx]) {
+                    yield veganOnly[idx]; // pause here and give out the food item
+                    idx++; // increment the index
                 }
+            }
+
+            // iterate through the custom iterable
+            for (let value of listVeganFoods()) {
+                console.log(value.name);
+            }
+
+            // when it is finished iterating, return to prompt
+            readline.prompt();
+            // ------------------ GENERATOR ENDS --------------------
 
 
-                // iterate through the custom iterable
-                for (let value of veganIterable) {
-                    console.log(value.name);
-                }
+            // ------------------ CUSTOM ITERATOR STARTS --------------------
+            // fetch all the foods from the api
+            // axios.get('http://localhost:3001/food').then(({ data }) => {
 
-                // when it is finished iterating, return to prompt
-                readline.prompt();
-            })
+            //     // veganIterable is a working custom iterator
+            //     let idx = 0;
+
+            //     // filter all the foods which include "vegan" in their dietary preference
+            //     // and the resulting array will be used to iterate over by the custom iterator
+            //     const veganOnly = data.filter(foodItem => {
+            //         return foodItem.dietary_preferances.includes("vegan");
+            //     });
+
+            //     const veganIterable = {
+
+            //         // creating the veganIterable an iterable - should return an iterable itself
+            //         [Symbol.iterator]() {
+            //             return {
+            //                 [Symbol.iterator]() { return this; },
+            //                 next() {
+            //                     const current = veganOnly[idx];
+            //                     // increment idx on each next() call
+            //                     idx++;
+
+            //                     if (current) {
+            //                         return { value: current, done: false }
+            //                     } else {
+            //                         return { value: current, done: true }
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+
+
+            //     // iterate through the custom iterable
+            //     for (let value of veganIterable) {
+            //         console.log(value.name);
+            //     }
+
+            //     // when it is finished iterating, return to prompt
+            //     readline.prompt();
+            // })
+            // ------------------ CUSTOM ITERATOR ENDS --------------------
         }
             break;
         case 'log':
@@ -63,44 +93,54 @@ readline.on('line', async (line) => {
                 const objectIterator = data[Symbol.iterator]();
                 let actionIt;
 
+                // --------------------- GENERATOR FUNCTION -----------------------
+                function* actionGenerator() {
+                    const food = yield;
+                    const servingSize = yield askForServingSize();
+                    yield displayCalories(servingSize, food);
+                }
+                // --------------------- GENERATOR FUNCTION -----------------------
+
+                // --------------------- CUSTOM ITERATOR WITH return() and throw() -------------------------
                 // custom iterator - actionIterator
-                const actionIterator = {
-                    [Symbol.iterator]() {
-                        let positions = [...this.actions];
-                        return {
-                            [Symbol.iterator]() { return this; },
-                            next(...args) {
-                                // some of the next call can have arguments as well, therefore ->> ...args
+                // const actionIterator = {
+                //     [Symbol.iterator]() {
+                //         let positions = [...this.actions];
+                //         return {
+                //             [Symbol.iterator]() { return this; },
+                //             next(...args) {
+                //                 // some of the next call can have arguments as well, therefore ->> ...args
 
 
-                                // check if there are still functions to call
-                                // on every next call, we'll take out 1 function out of the positions array and execute it
-                                // we take it out so that with the next call, we dont accidently call the same function
-                                if (positions.length > 0) {
-                                    const position = positions.shift(); // will take the 1st element (function) and return it
+                //                 // check if there are still functions to call
+                //                 // on every next call, we'll take out 1 function out of the positions array and execute it
+                //                 // we take it out so that with the next call, we dont accidently call the same function
+                //                 if (positions.length > 0) {
+                //                     const position = positions.shift(); // will take the 1st element (function) and return it
 
-                                    // position is the function to be called
-                                    // now the function can be accepting arguments
-                                    const result = position(...args);
+                //                     // position is the function to be called
+                //                     // now the function can be accepting arguments
+                //                     const result = position(...args);
 
-                                    return { value: result, done: false };
-                                } else {
-                                    // when there are no more actions to execute
-                                    return { done: true };
-                                }
-                            },
-                            return() {
-                                positions = [];
-                                return { done: true };
-                            },
-                            throw(error) {
-                                console.log(error);
-                                return { value: undefined, done: true };
-                            }
-                        }
-                    },
-                    actions: [askForServingSize, displayCalories]
-                };
+                //                     return { value: result, done: false };
+                //                 } else {
+                //                     // when there are no more actions to execute
+                //                     return { done: true };
+                //                 }
+                //             },
+                //             return() {
+                //                 positions = [];
+                //                 return { done: true };
+                //             },
+                //             throw(error) {
+                //                 console.log(error);
+                //                 return { value: undefined, done: true };
+                //             }
+                //         }
+                //     },
+                //     actions: [askForServingSize, displayCalories]
+                // };
+                // --------------------- CUSTOM ITERATOR WITH return() and throw() -------------------------
 
 
 
@@ -113,7 +153,7 @@ readline.on('line', async (line) => {
                         if (servingSizeByUser === 'nevermind' || servingSizeByUser === 'n') {
                             actionIt.return();
                         } else {
-                            actionIt.next(servingSizeByUser, food);
+                            actionIt.next(servingSizeByUser);
                         }
 
                     })
@@ -163,13 +203,22 @@ readline.on('line', async (line) => {
                             // if user has entered the same item as in our db, show calories
                             console.log(`${item} has ${position.value.calories} calories`);
 
+                            // --------------- INITIALIZE THE CUSTOM ITERATOR --------------------
                             // initialize the action iterator
-                            actionIt = actionIterator[Symbol.iterator]();
+                            // actionIt = actionIterator[Symbol.iterator]();
 
                             // passing the entire food item object
                             // this is the food object which we need in our actions
                             // the two actions (functions) will be called on this food item
-                            actionIt.next(position.value);
+                            // actionIt.next(position.value);
+                            // --------------- INITIALIZE THE CUSTOM ITERATOR --------------------
+
+
+                            // --------------- INITIALIZE THE GENERATOR --------------------
+                            actionIt = actionGenerator();
+                            actionIt.next(); // starts the generator
+                            actionIt.next(position.value); // gives food item object to the 1st yield
+                            // --------------- INITIALIZE THE GENERATOR --------------------
                         }
                         position = objectIterator.next();
                     }

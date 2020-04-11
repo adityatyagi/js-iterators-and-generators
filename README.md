@@ -25,6 +25,8 @@ To make API calls, we are using [axios](https://www.npmjs.com/package/axios). Ax
 
 `chmod +x ./index.js` ---> To make file an executable. Run the following command from a bash.  
 
+# ITERATORS
+
 **What is an iterable?**  
 1. For a object to be an iterable, it has to implement the `@@iterator` method. Means, the object must have a property with `Symbol.iterator ` key
 2. There are many built-in iterators like Arrays, Strings, Maps, Sets  
@@ -163,4 +165,10 @@ The best article on [ES6 Generators](https://davidwalsh.name/es6-generators)
 [My CodePen](https://codepen.io/adityatyagi/pen/zYvxmee?editors=0012)  
 
 [Infinitely running function](https://codepen.io/adityatyagi/pen/NWGPeNm?editors=0012)
+
+The `return()` and `throw()` methods which are optional on Iterators, are already there on the Generator Functions.  
+
+IMPORTANT: Number of `next()` calls is not equal to number of `yield` statements. To run the first `yield`, we need 2 `next()` calls. The first one to start the generator and the second one for the yield.  
+
+Therefore, there will be always 1 extra `next` call to start the generator.  
 
