@@ -1,0 +1,67 @@
+{
+  "food": [
+    {
+      "id": 1,
+      "name": "Apple",
+      "calories": 88,
+      "serving_size": 6,
+      "serving_size_units": "cal",
+      "dietary_preferances": [
+        "keto"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Orange",
+      "calories": 96,
+      "serving_size": 4,
+      "serving_size_units": "cal",
+      "dietary_preferances": [
+        "vegan"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Pizza",
+      "calories": 190,
+      "serving_size": 4,
+      "serving_size_units": "cal",
+      "dietary_preferances": [
+        "keto"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Burger",
+      "calories": 200,
+      "serving_size": 3,
+      "serving_size_units": "cal",
+      "dietary_preferances": [
+        "vegan"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "first_name": "Aditya",
+      "last_name": "Tyagi",
+      "email": "tyagi.aditya844747@gmail.com",
+      "log": [
+        {
+          "1586587030166": {
+            "food": "Apple",
+            "servingSize": "2",
+            "calories": 176
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "first_name": "Rohan",
+      "last_name": "Kapoor",
+      "email": "rohan.kapoor@gmail.com"
+    }
+  ]
+}
