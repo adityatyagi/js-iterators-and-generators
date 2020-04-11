@@ -3,7 +3,14 @@ const axios = require('axios');
 const readline = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout,
-    prompt: 'enter command > '
+    prompt: `enter command > 
+    Options: 
+    1. log 
+    2. today's log
+    3. list vegan foods 
+    4. (Ctrl+C to exit)
+    --------------------
+    ENTER: `
 });
 
 // prompt the user to enter a command, this command will be one of the commands in our switch statement
@@ -16,18 +23,24 @@ readline.on('line', async (line) => {
             // ------------------ GENERATOR STARTS --------------------
             // converting custom iterator to generator
             const { data } = await axios.get('http://localhost:3001/food');
-            function* listVeganFoods() {
-                let idx = 0;
-                // filter all the foods which include "vegan" in their dietary preference
-                // and the resulting array will be used to iterate over by the custom iterator
-                const veganOnly = data.filter(foodItem => {
-                    return foodItem.dietary_preferances.includes("vegan");
-                });
 
-                // run the loop till the time there are items in the veganOnly array
-                while (veganOnly[idx]) {
-                    yield veganOnly[idx]; // pause here and give out the food item
-                    idx++; // increment the index
+            function* listVeganFoods() {
+                try {
+                    let idx = 0;
+                    // filter all the foods which include "vegan" in their dietary preference
+                    // and the resulting array will be used to iterate over by the custom iterator
+                    const veganOnly = data.filter(foodItem => {
+                        return foodItem.dietary_preferances.includes("vegan");
+                    });
+
+                    // run the loop till the time there are items in the veganOnly array
+                    while (veganOnly[idx]) {
+                        yield veganOnly[idx]; // pause here and give out the food item
+                        idx++; // increment the index
+                    }
+                } catch (error) {
+                    console.log(`Something went wrong while listing vegan food items`, { error });
+                    readline.prompt();
                 }
             }
 
@@ -95,9 +108,14 @@ readline.on('line', async (line) => {
 
                 // --------------------- GENERATOR FUNCTION -----------------------
                 function* actionGenerator() {
-                    const food = yield;
-                    const servingSize = yield askForServingSize();
-                    yield displayCalories(servingSize, food);
+                    try {
+                        const food = yield;
+                        const servingSize = yield askForServingSize();
+                        yield displayCalories(servingSize, food);
+                    } catch (error) {
+                        console.log({ error });
+                        readline.prompt();
+                    }
                 }
                 // --------------------- GENERATOR FUNCTION -----------------------
 
@@ -152,6 +170,9 @@ readline.on('line', async (line) => {
                         // return() will break the iteration and will not go the next question
                         if (servingSizeByUser === 'nevermind' || servingSizeByUser === 'n') {
                             actionIt.return();
+                        } else if (typeof Number(servingSizeByUser) !== 'number' || typeof servingSizeByUser === NaN) {
+                            actionIt.throw('Please, numbers only');
+                            readline.prompt();
                         } else {
                             actionIt.next(servingSizeByUser);
                         }
@@ -236,14 +257,27 @@ readline.on('line', async (line) => {
 
                 // logs out all the food-logs for the present day
                 function* getFoodLog() {
-                    yield* foodLog; // yield delegation
+                    try {
+                        yield* foodLog; // yield delegation
+                    } catch (error) {
+                        console.log('Error reading the food log', { error });
+                        readline.prompt();
+                    }
                 }
 
-                for (const entry of getFoodLog()) {
+                const logIterator = getFoodLog();
+
+                for (const entry of logIterator) {
                     const timeStamp = Object.keys(entry)[0];
                     if (isToday(new Date(Number(timeStamp)))) {
                         console.log(`${entry[timeStamp].food}, ${entry[timeStamp].servingSize} serving(s)`);
                         totalCalories += entry[timeStamp].calories;
+                        if (totalCalories >= 12000) {
+                            console.log('Impressive! You have reached 12000 calories.');
+
+                            // with this return(), the generator will not log any food item on the screen
+                            logIterator.return(); // early completion/exit from the generator function
+                        }
                     }
                 }
                 console.log('-------------------');

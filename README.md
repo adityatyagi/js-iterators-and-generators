@@ -6,7 +6,9 @@ A test app developed while pursuing a course from PluralSight on JavaScript Gene
 2. Prompt the user what they ate?  
 3. Show how many calories are in that food.  
 4. Saves the log to the fake database.  
-5. Logs the food items eaten today by a particular user, along with the total calorie count
+5. Logs the food items eaten today by a particular user, along with the total calorie count.  
+6. Show a message to the user if their calorie amount/intake goes above a certain value.  
+
 
 
 Using Node's [Readline module](https://nodejs.org/api/readline.html#readline_readline) for IO operations.  
@@ -178,5 +180,23 @@ Therefore, there will be always 1 extra `next` call to start the generator.
 ## YIELD DELEGATION
 Yield delegation allows a host generator function to control the iteration of a different generator function.  
 
-[CodePen for Yield delegation](https://codepen.io/adityatyagi/pen/gOabJmb?editors=0012);
+[CodePen for Yield delegation](https://codepen.io/adityatyagi/pen/gOabJmb?editors=0012);  
+
+## HANDLING EXCEPTIONS/ERRORS IN GENERATOR FUNCTIONS & EARLY COMPLETION
+
+Generator functions include `return()` and `throw()`.  
+
+We use `return()` or `throw()` to abort the iterator before it would have normally completed.  
+
+`iterator.return()`: ends a generator functon's execution. For example, you have reached a pause point in the generator function which gives you a value and tells you not to continue to remaining pause points.  
+
+`iterator.throw()`: will end a generator function's execution while also throwing an exception that can be handled by the generator. This is useful when you are using the iterator provided by the generator in a separate context.  
+
+
+Once a error is thrown by an Generator function iterator, using the `throw()`, the Generator function completes and if `next()` is called on the iterator again, other `yield` (if present) are not called and the Generator function returns `done:true`.  
+
+We can also throw an error from inside the `try` block, apart from throwing it from the `catch` block and outside using an iterator.  
+
+[CodePen for Error Handling](https://codepen.io/pen/?editors=0012)  
+
 
