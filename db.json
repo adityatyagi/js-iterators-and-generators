@@ -68,6 +68,41 @@
             "servingSize": "1",
             "calories": 88
           }
+        },
+        {
+          "1586620714838": {
+            "food": "Apple",
+            "servingSize": "1",
+            "calories": 88
+          }
+        },
+        {
+          "1586620724340": {
+            "food": "Apple",
+            "servingSize": "1",
+            "calories": 88
+          }
+        },
+        {
+          "1586620731779": {
+            "food": "Burger",
+            "servingSize": "2",
+            "calories": 400
+          }
+        },
+        {
+          "1586620739765": {
+            "food": "Pizza",
+            "servingSize": "0.5",
+            "calories": 95
+          }
+        },
+        {
+          "1586620745900": {
+            "food": "Apple",
+            "servingSize": "2",
+            "calories": 176
+          }
         }
       ]
     },

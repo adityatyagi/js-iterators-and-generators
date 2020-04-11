@@ -5,6 +5,9 @@ A test app developed while pursuing a course from PluralSight on JavaScript Gene
 1. The app runs from command line.  
 2. Prompt the user what they ate?  
 3. Show how many calories are in that food.  
+4. Saves the log to the fake database.  
+5. Logs the food items eaten today by a particular user, along with the total calorie count
+
 
 Using Node's [Readline module](https://nodejs.org/api/readline.html#readline_readline) for IO operations.  
 
@@ -171,4 +174,9 @@ The `return()` and `throw()` methods which are optional on Iterators, are alread
 IMPORTANT: Number of `next()` calls is not equal to number of `yield` statements. To run the first `yield`, we need 2 `next()` calls. The first one to start the generator and the second one for the yield.  
 
 Therefore, there will be always 1 extra `next` call to start the generator.  
+
+## YIELD DELEGATION
+Yield delegation allows a host generator function to control the iteration of a different generator function.  
+
+[CodePen for Yield delegation](https://codepen.io/adityatyagi/pen/gOabJmb?editors=0012);
 

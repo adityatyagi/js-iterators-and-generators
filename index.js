@@ -227,6 +227,44 @@ readline.on('line', async (line) => {
                 })
             }
             break;
+        case `today's log`: {
+            readline.question('Email: ', async (emailAddress) => {
+                // json-server will filter the user list by email and return user
+                const { data } = await axios.get(`http://localhost:3001/users?email=${emailAddress}`);
+                const foodLog = data[0].log || [];
+                let totalCalories = 0;
+
+                // logs out all the food-logs for the present day
+                function* getFoodLog() {
+                    yield* foodLog; // yield delegation
+                }
+
+                for (const entry of getFoodLog()) {
+                    const timeStamp = Object.keys(entry)[0];
+                    if (isToday(new Date(Number(timeStamp)))) {
+                        console.log(`${entry[timeStamp].food}, ${entry[timeStamp].servingSize} serving(s)`);
+                        totalCalories += entry[timeStamp].calories;
+                    }
+                }
+                console.log('-------------------');
+                console.log(`Total calories: ${totalCalories}`);
+                readline.prompt();
+            })
+        }
+            break;
     }
 })
+
+function isToday(timestamp) {
+    const today = new Date();
+    if (
+        timestamp.getDate() === today.getDate() &&
+        timestamp.getMonth() === today.getMonth() &&
+        timestamp.getYear() === today.getYear()
+    ) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
