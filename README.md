@@ -229,7 +229,10 @@ Used to cancel a promise if it is taking too long to resolve.
 **How to use?**  
 Instead of `const token = CAF.cancelToken()`, use `const token = CAF.timeout(300, 'This is taking too long')`  
 
-Inside the CAF function, `yield CAF.delay(signal, 400);`
+Inside the CAF function, `yield CAF.delay(signal, 400);`  
+
+![image](https://user-images.githubusercontent.com/18363595/79056395-ca93f980-7c73-11ea-97bb-f3f8be08a9e1.png)
+
 
 
 
