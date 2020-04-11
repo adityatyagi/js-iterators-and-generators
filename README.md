@@ -199,4 +199,37 @@ We can also throw an error from inside the `try` block, apart from throwing it f
 
 [CodePen for Error Handling](https://codepen.io/pen/?editors=0012)  
 
+# CANCELABLE ASYNC FLOWS (CAF)  
+
+It is a library created by Kyle Simpson for making it easier to work with Async actions in Generator Functions by making them feel and look like normal async functions. 
+
+[CAF](https://github.com/getify/CAF)  : Makes Generator Functions work like async functions.  
+
+One of the biggest problems with async functions is not being able to externally cancel the async request. Like we can do it with the Generator Functions using iterator.return() or iterator.next() to control the function. This type of external control doesn't exist for async functions.  
+
+CAF works by wrapping a Generator Function in a CAF function - `CAF(<Generator_Function(signal)>)`;  
+This will return a promise when called.  
+
+Whatever value you return in the Generator Function, is the value the Promise will resolve with.  
+
+These functions can be cancelled by using the CAF Cancel Token: `const token = new CAF.cancelToken()`.  
+A cancel token has a signal object available which you must supply to the Generator function as its first argument.  
+That signal listens for an external ABORT call. When this ABORT is called, it will cancel the generator function.  
+
+![image](https://user-images.githubusercontent.com/18363595/79056283-3c6b4380-7c72-11ea-9aba-65a406fc1d97.png)  
+
+## TOKEN CANCELLATION
+
+`CAF.delay()`: A promisified setTimeout() that can be cancelled.  
+
+`CAF.timeout()`: Abort a token after a specified time.  
+
+Used to cancel a promise if it is taking too long to resolve.  
+
+**How to use?**  
+Instead of `const token = CAF.cancelToken()`, use `const token = CAF.timeout(300, 'This is taking too long')`  
+
+Inside the CAF function, `yield CAF.delay(signal, 400);`
+
+
 
